@@ -1,8 +1,6 @@
 import { SSNHelper } from '../src/correct/SSNHelper'; 
 
-
-
-describe('SSNHelpe Tests', () => {
+describe('SSNHelper Tests', () => {
 
     test('replace this test with one of your own', () => {
         expect(true).toBe(true);
