@@ -1,8 +1,9 @@
 
 // Select one of the Password versions to test
 
+// import { Password } from '../src/Correct' //✅
 // import { Password } from '../src/BugDoesNotHash' //✅
-// import { Password } from '../src/BugDoesNotTrim' //✅
+import { Password } from '../src/BugDoesNotTrim' //✅
 // import { Password } from '../src/BugisPasswordAlwaysSame' //✅
 // import { Password } from '../src/BugMissingNumberCheck' //✅
 // import { Password } from '../src/BugMissingPasswordCheck'// ✅
@@ -11,103 +12,80 @@
 // import { Password } from '../src/BugVeryShort' //✅
 // import { Password } from '../src/BugWrongHashingAlgorithm' //✅
 // import { Password } from '../src/BugWrongMessage' //✅
-import { Password } from '../src/Correct'
 
-describe('BugToShortPassword, 11 characters', () => {
-    const password11 = 'Hej12345678';
+describe('Password class, test suite', () => {
+  const shortPw = 'hej12345678';
+  const veryShortPw = 'hej123'
+  const correctPw = 'hej123456789'
+  const correctBackwardsPw = 'hej987654321'
+  
+  const noNumbersPw = 'hejsansvejsan'
+  const withWhitespacesPw = ' hej1234567 '
 
-    test('should throw error when less than 12 characters', () => {
-        // En funktion, men ANONYM. En ANONYM funktion
-        // skulle returnera resultatet av funktionen, inte 
-        // funktionen i sig.
-        expect(() => new Password(password11)).toThrow(Error);
-    });
+  // BugToShortPassword
+  test('should throw error when less than 12 characters', () => {
+    // En funktion, men ANONYM. En ANONYM funktion
+    // skulle returnera resultatet av funktionen, inte 
+    // funktionen i sig.
+    expect(() => new Password(shortPw)).toThrow(Error);
+  });
 
-})
+  // BugVeryShort
+  test('should throw error when less than 6 characters', () => {
+    expect(() => new Password(veryShortPw)).toThrow(Error)
+  })
 
-describe('BugVeryShort, 6 characters', () => {
-    const password = 'Hej123'
+  // BugNeverContainsNumbers
+  test('should not throw error if password has numbers', () => {
+    expect(() => new Password(correctPw)).not.toThrow(Error)
+  })
 
-    test('should throw error when less than 6 characters', () => {
-        expect(() => new Password(password)).toThrow(Error)
-    })
-})
+  // BugMissingPasswordCheck
+  test('should throw error when password is less than 12 characters', () => {
+    expect(() => new Password(shortPw)).toThrow(Error)
+  })
 
-describe('BugNeverContainsNumbers', () => {
-    const password = 'hejsansvejsan12'
+  // BugMissingNumberCheck
+  test('should throw error if there are no numbers', () => {
+    expect(() => new Password(noNumbersPw)).toThrow(Error)
+  })
 
-    test('should not throw error if password has numbers', () => {
-        expect(() => new Password(password)).not.toThrow(Error)
-    })
-})
-
-describe('BugMissingPasswordCheck', () => {
-    const password = 'hej1'
-
-    test('should throw error when password is less than 12 characters', () => {
-        expect(() => new Password(password)).toThrow(Error)
-    })
-})
-
-describe('BugMissingNumberCheck', () => {
-    const password = 'hejsansvejsan'
-
-    test('should throw error if there are no numbers', () => {
-        expect(() => new Password(password)).toThrow(Error)
-    })
-})
-
-describe('BugDoesNotTrim', () => {
-    const password = ' Hej1234567 '
-
-    test('should throw error when password with whitespaces', () => {
-        expect(() => new Password(password)).toThrow(Error)
-    })
-})
-
-describe('BugDoesNotHash', () => {
-    const password = 'hej123456789'
-    const passwordObject = new Password(password)
+  //BugDoesNotTrim
+  test('should throw error when password with whitespaces', () => {
+    expect(() => new Password(withWhitespacesPw)).toThrow(Error)
+  })
+    
+  // BugDoesNotHash
+  test('should have a hash value of type number', () => {
+    const passwordObject = new Password(correctPw)
     const hash = passwordObject.getPasswordHash()
 
-    test('should have a hash value of type number', () => {
-        expect(hash).not.toBe(password)
-    })
-})
-
-describe('BugWrongHashingAlgorithm', () => {
-    const password1 = 'Hej123456789'
-    const password2 = 'Hej987654321'
-
-    const passwordObject1 = new Password(password1)
-    const passwordObject2 = new Password(password2)
+    expect(hash).not.toBe(correctPw)
+  })
+    
+  // BugWrongHashingAlgorithm
+  test('should create different hashes for different passwords', () => {
+    const passwordObject1 = new Password(correctPw)
+    const passwordObject2 = new Password(correctBackwardsPw)
 
     const hash1 = passwordObject1.getPasswordHash()
     const hash2 = passwordObject2.getPasswordHash()
 
-    test('should create different hashes for different passwords', () => {
-        expect(hash1).not.toBe(hash2)
-    })
-})
+    expect(hash1).not.toBe(hash2)
+  })
 
-describe('BugisPasswordAlwaysSame', () => {
-    const password1 = 'Hej123456789'
-    const password2 = 'Hej987654321'
-
-    const passwordObject1 = new Password(password1)
-    const passwordObject2 = new Password(password2)
+  // BugisPasswordAlwaysSame
+  test('should return false if passwords are different', () => {
+    const passwordObject1 = new Password(correctPw)
+    const passwordObject2 = new Password(correctBackwardsPw)
 
     const same = passwordObject1.isPasswordSame(passwordObject2)
 
-    test('should return false if passwords are different', () => {
-        expect(same).toBeFalsy()
-    })
-})
+    expect(same).toBeFalsy()
+  })
 
-describe('BugWrongMessage', () => {
-    const password = 'Hej123'
-
-    test('should throw "Too short password" if password is less than 12 characters', () => {
-        expect(() => new Password(password)).toThrow('Too short password')
-    })
+  // BugWrongMessage
+  test('should throw "Too short password" if password is less than 12 characters', () => {
+      expect(() => new Password(veryShortPw)).toThrow('Too short password')
+  })
 })
