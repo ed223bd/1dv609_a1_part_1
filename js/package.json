@@ -7,7 +7,7 @@
   "scripts": {
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --coverage",
     "t1": "node --experimental-vm-modules node_modules/jest/bin/jest.js practice/practice_write_run_test --coverage",
-    "t2": "node --experimental-vm-modules node_modules/jest/bin/jest.js practice/practice_write_mocked_tests --coverage"
+    "t2": "node --experimental-vm-modules node_modules/jest/bin/jest.js practice/practice_write_mocked_tests --coverage --verbose"
   },
   "keywords": [],
   "author": "",

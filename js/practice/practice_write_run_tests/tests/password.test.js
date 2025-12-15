@@ -1,17 +1,19 @@
 
 // Select one of the Password versions to test
 
-// import { Password } from '../src/Correct' //✅
-// import { Password } from '../src/BugDoesNotHash' //✅
-import { Password } from '../src/BugDoesNotTrim' //✅
-// import { Password } from '../src/BugisPasswordAlwaysSame' //✅
-// import { Password } from '../src/BugMissingNumberCheck' //✅
-// import { Password } from '../src/BugMissingPasswordCheck'// ✅
-// import { Password } from '../src/BugNeverContainsNumbers' //✅
-// import { Password } from '../src/BugToShortPassword' //✅
+import { Password } from '../src/Correct' //✅
+// import { Password } from '../src/MyCustomBug' //✅
 // import { Password } from '../src/BugVeryShort' //✅
-// import { Password } from '../src/BugWrongHashingAlgorithm' //✅
+// import { Password } from '../src/BugToShortPassword' //✅
+// import { Password } from '../src/BugMissingPasswordCheck'// ✅
 // import { Password } from '../src/BugWrongMessage' //✅
+// import { Password } from '../src/BugNeverContainsNumbers' //✅
+// import { Password } from '../src/BugMissingNumberCheck' //✅
+// import { Password } from '../src/BugDoesNotTrim' //✅
+// import { Password } from '../src/BugDoesNotHash' //✅
+// import { Password } from '../src/BugWrongHashingAlgorithm' //✅
+// import { Password } from '../src/BugisPasswordAlwaysSame' //✅
+
 
 describe('Password class, test suite', () => {
   const shortPw = 'hej12345678';
@@ -22,41 +24,34 @@ describe('Password class, test suite', () => {
   const noNumbersPw = 'hejsansvejsan'
   const withWhitespacesPw = ' hej1234567 '
 
-  // BugToShortPassword
-  test('should throw error when less than 12 characters', () => {
-    // En funktion, men ANONYM. En ANONYM funktion
-    // skulle returnera resultatet av funktionen, inte 
-    // funktionen i sig.
-    expect(() => new Password(shortPw)).toThrow(Error);
-  });
-
   // BugVeryShort
-  test('should throw error when less than 6 characters', () => {
+  test('constructor should throw error for very short password', () => {
     expect(() => new Password(veryShortPw)).toThrow(Error)
   })
 
+  // BugToShortPassword & BugMissingPasswordCheck &BugWrongMessage
+  test('constructor should throw error message "Too short password" for short password', () => {
+    // Anonym funktion
+    expect(() => new Password(shortPw)).toThrow('Too short password')
+  })
+
   // BugNeverContainsNumbers
-  test('should not throw error if password has numbers', () => {
+  test('constructor should not throw error for password with numbers', () => {
     expect(() => new Password(correctPw)).not.toThrow(Error)
   })
 
-  // BugMissingPasswordCheck
-  test('should throw error when password is less than 12 characters', () => {
-    expect(() => new Password(shortPw)).toThrow(Error)
-  })
-
   // BugMissingNumberCheck
-  test('should throw error if there are no numbers', () => {
+  test('constructor should throw error for password without numbers', () => {
     expect(() => new Password(noNumbersPw)).toThrow(Error)
   })
 
   //BugDoesNotTrim
-  test('should throw error when password with whitespaces', () => {
+  test('constructor should throw error for trimmed short password', () => {
     expect(() => new Password(withWhitespacesPw)).toThrow(Error)
   })
-    
+
   // BugDoesNotHash
-  test('should have a hash value of type number', () => {
+  test('getPasswordHash should not return the password for valid password', () => {
     const passwordObject = new Password(correctPw)
     const hash = passwordObject.getPasswordHash()
 
@@ -64,7 +59,7 @@ describe('Password class, test suite', () => {
   })
     
   // BugWrongHashingAlgorithm
-  test('should create different hashes for different passwords', () => {
+  test('getPasswordHash should get different hashes for different passwords', () => {
     const passwordObject1 = new Password(correctPw)
     const passwordObject2 = new Password(correctBackwardsPw)
 
@@ -75,7 +70,7 @@ describe('Password class, test suite', () => {
   })
 
   // BugisPasswordAlwaysSame
-  test('should return false if passwords are different', () => {
+  test('isPasswordSame should return false if passwords are different', () => {
     const passwordObject1 = new Password(correctPw)
     const passwordObject2 = new Password(correctBackwardsPw)
 
@@ -84,8 +79,11 @@ describe('Password class, test suite', () => {
     expect(same).toBeFalsy()
   })
 
-  // BugWrongMessage
-  test('should throw "Too short password" if password is less than 12 characters', () => {
-      expect(() => new Password(veryShortPw)).toThrow('Too short password')
+  // Additional, for error branch coverage
+  test('isPasswordSame should throw error for non-password argument', () => {
+    const passwordObject = new Password(correctPw)
+    const notAPassword = 1234567891011
+
+    expect(() => passwordObject.isPasswordSame(notAPassword)).toThrow('Invalid argument')
   })
 })
